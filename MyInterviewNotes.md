@@ -28,3 +28,10 @@
 
 ## 5. Testing
 *   **Unit Testing:** Used JUnit 5 to test the `AllocationEngine` logic.
+
+## 6. Core Features Implemented (Continued)
+*   **Database Migrations:** Used Flyway to auto-create tables (`users`, `workers`, `jobs`, `worker_slots`) on app startup.
+*   **Allocation Engine Integration:** Integrated the `AllocationEngine` directly into the `JobService`. When a new job is created, it fetches all available workers for that specific skill from PostgreSQL, calculates their scores, and selects the top workers.
+
+**Interview Proof (Logs):**
+> "During testing, I observed the Hibernate logs. The system inserted a new Job (ID: 2) and then executed a query `SELECT * FROM workers WHERE primary_skill = ?`. The Allocation Engine processed this data and printed: `Worker ID: 1 | Score: 363.5`. This proved end-to-end data flow and algorithm execution."
