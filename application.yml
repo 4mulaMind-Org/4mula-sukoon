@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: 4mula-sukoon
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sukoon_db
+    username: sukoon_user
+    password: sukoon_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate # Tables Flyway banayega, JPA sirf check karega
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
