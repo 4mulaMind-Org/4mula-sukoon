@@ -35,3 +35,5 @@
 
 **Interview Proof (Logs):**
 > "During testing, I observed the Hibernate logs. The system inserted a new Job (ID: 2) and then executed a query `SELECT * FROM workers WHERE primary_skill = ?`. The Allocation Engine processed this data and printed: `Worker ID: 1 | Score: 363.5`. This proved end-to-end data flow and algorithm execution."
+
+- **Race Condition Prevention:** Proven using Testcontainers where 10 concurrent threads attempted to accept the same job. Only 1 succeeded, while 9 received a 409 Conflict, ensuring zero double-booking.

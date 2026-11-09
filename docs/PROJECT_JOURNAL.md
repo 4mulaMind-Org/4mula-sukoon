@@ -16,3 +16,15 @@ This document tracks the real-world challenges faced during the development of 4
 ## 3. Upcoming Sprints
 - **Sprint 4:** Spring Security & JWT.
 - **Sprint 5:** External APIs (Maps for distance, Weather).
+
+## 4. Environment & Infrastructure Challenges
+- **Challenge:** Spring Boot app failed to start with `Connection refused` error.
+    - *Root Cause:* The Docker containers (PostgreSQL/Redis) were not running in the background (likely due to a system restart).
+    - *Solution:* Ran `docker-compose up -d` to spin up the infrastructure before starting the app.
+    - *Interview Learning:* Learned the importance of environment parity and how Spring Boot's `HikariCP` fails fast if the primary database is unreachable during Flyway migrations.
+
+## 5. Concurrency & Locking (The Core Challenge)
+- **Challenge:** How to prevent double-booking when 10 workers press "Accept Job" at the exact same millisecond? (Race Condition).
+- **Solution:** Implemented **Pessimistic Locking** using `@Lock(LockModeType.PESSIMISTIC_WRITE)` in `JobRepository`. In PostgreSQL, this translates to a `SELECT ... FOR NO KEY UPDATE` query, which locks the row until the transaction completes.
+- **Testing Infrastructure:** Used **Testcontainers** to spin up a real PostgreSQL and Redis instance in Docker during tests, ensuring 100% environment parity with production.
+- **Proof:** Wrote a concurrency test using `ExecutorService` and `CountDownLatch` to spawn 10 threads simultaneously. Result: **Exactly 1 Success, 9 Failures**. Database integrity maintained perfectly.

@@ -1,5 +1,6 @@
 package com.sukoon.controller;
 
+import com.sukoon.dto.AcceptJobResponse;
 import com.sukoon.dto.JobRequest;
 import com.sukoon.dto.JobResponse;
 import com.sukoon.service.IdempotencyService;
@@ -41,5 +42,17 @@ public class JobController {
         idempotencyService.saveResponse(idemKey, objectMapper.writeValueAsString(response));
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{jobId}/accept")
+    public ResponseEntity<?> acceptJob(
+            @PathVariable Long jobId,
+            @RequestParam Long workerId) {
+        try {
+            AcceptJobResponse response = jobService.acceptJob(jobId, workerId);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(409).body(e.getMessage()); // 409 Conflict
+        }
     }
 }

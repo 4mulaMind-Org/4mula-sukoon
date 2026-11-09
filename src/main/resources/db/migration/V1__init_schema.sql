@@ -2,7 +2,7 @@ CREATE TABLE users (
                        id BIGSERIAL PRIMARY KEY,
                        phone VARCHAR(15) UNIQUE NOT NULL,
                        name VARCHAR(100),
-                       role VARCHAR(20) CHECK (role IN ('CUSTOMER', 'ADMIN')),
+                       role VARCHAR(20) CHECK (role IN ('CUSTOMER', 'WORKER', 'ADMIN')),
                        created_at TIMESTAMP DEFAULT NOW()
 );
 
