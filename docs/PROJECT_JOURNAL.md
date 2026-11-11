@@ -28,3 +28,14 @@ This document tracks the real-world challenges faced during the development of 4
 - **Solution:** Implemented **Pessimistic Locking** using `@Lock(LockModeType.PESSIMISTIC_WRITE)` in `JobRepository`. In PostgreSQL, this translates to a `SELECT ... FOR NO KEY UPDATE` query, which locks the row until the transaction completes.
 - **Testing Infrastructure:** Used **Testcontainers** to spin up a real PostgreSQL and Redis instance in Docker during tests, ensuring 100% environment parity with production.
 - **Proof:** Wrote a concurrency test using `ExecutorService` and `CountDownLatch` to spawn 10 threads simultaneously. Result: **Exactly 1 Success, 9 Failures**. Database integrity maintained perfectly.
+
+## 6. Spring Security & JWT Implementation
+- **Challenge:** Securing APIs so that a user can only book jobs for themselves, and workers can only accept jobs as themselves.
+- **Solution:** Integrated Spring Security 6 and JWT. Configured a `SecurityFilterChain` to permit only public routes (like registration) and secure the rest. Added a `JwtService` to generate and validate tokens.
+- **Interview Note:** Emphasized the use of `SessionCreationPolicy.STATELESS` as JWT doesn't require server-side sessions, making the app highly scalable.
+
+## 7. Database Migrations (Flyway Checksum Issue)
+- **Challenge:** App failed to start with `FlywayValidateException: Migration checksum mismatch`.
+- **Root Cause:** We modified the `V1__init_schema.sql` file (added WORKER role) after it had already been applied to the local database. Flyway tracks file checksums to prevent database corruption.
+- **Solution:** For local development, we reset the database using `docker-compose down -v` and restarted it.
+- **Interview Learning:** In production, you should NEVER modify an already applied migration file. Instead, you should create a new `V2__add_worker_role.sql` migration file to alter the schema.

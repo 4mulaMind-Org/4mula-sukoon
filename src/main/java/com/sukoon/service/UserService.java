@@ -6,7 +6,9 @@ import com.sukoon.entity.User;
 import com.sukoon.enums.Role;
 import com.sukoon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -14,24 +16,26 @@ import java.time.LocalDateTime;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponse registerUser(UserRequest request) {
-        // Check if user exists
+        // Check if user already exists
         if (userRepository.findByPhone(request.getPhone()).isPresent()) {
             throw new RuntimeException("User with this phone already exists!");
         }
 
-        // Build and save user
+        // Create new User
         User user = User.builder()
                 .phone(request.getPhone())
                 .name(request.getName())
+                .password(passwordEncoder.encode("password123"))
                 .role(Role.CUSTOMER)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         User savedUser = userRepository.save(user);
 
-        // Return response
+        // Return Response
         return UserResponse.builder()
                 .id(savedUser.getId())
                 .phone(savedUser.getPhone())
